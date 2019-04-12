@@ -1,3 +1,5 @@
+window.addEventListener("load", fetchBookmarks);
+
 // find the form
 document.querySelector("form").addEventListener("submit", saveBookmark);
 
@@ -18,67 +20,83 @@ function saveBookmark(event) {
     // adding 1st bookmark
     bookmarks.push(bookmark);
     // set to local storage
-    localStorage.setItem("bookmarks", JSON.stringify(bookmarks)); 
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
   } else {
-      // get current bookmarks from local storage.
+    // get current bookmarks from local storage.
 
-     var bookmarks = JSON.parse(localStorage.getItem("bookmarks"));
+    var bookmarks = JSON.parse(localStorage.getItem("bookmarks"));
 
-        // push new bookmark into bookmarks
-     bookmarks.push(bookmark);
+    // push new bookmark into bookmarks
+    bookmarks.push(bookmark);
 
-     // set bookmarks to localstorage
-     localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
-
+    // set bookmarks to localstorage
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
   }
 
-document.querySelector("form").reset();
-
+  document.querySelector("form").reset();
 
   fetchBookmarks();
 }
 
-function fetchBookmarks(){
+function fetchBookmarks() {
+  var bookmarks = JSON.parse(localStorage.getItem("bookmarks"));
+
+  var output = document.querySelector("#bookmarks");
+
+  output.innerHTML = "";
+
+  for (var i = 0; i < bookmarks.length; i++) {
+    var div = document.createElement("div");
+
+    var h3 = document.createElement("h3");
+    h3.textContent = bookmarks[i].name;
+
+    // create vistit list
+    var a = document.createElement("a");
+    a.href = bookmarks[i].url;
+    a.className = "btn btn-success";
+    a.textContent = "vistit";
+
+    // delete button
+    var button = document.createElement("button");
+    button.className = "btn btn-danger";
+    button.textContent = "delete";
+
+    button.addEventListener("click", function(e) {
+        var name = e.target.parentElement.children[0].textContent; deleteBookmarks(name);
+
+    });
+
+    div.appendChild(h3);
+    div.appendChild(a);
+    div.appendChild(button);
+
+    output.appendChild(div);
+  }
+}
+
+function deleteBookmarks(name) {
 
     var bookmarks = JSON.parse(localStorage.getItem("bookmarks"));
 
 
-    var output = document.querySelector("#bookmarks");   
-    
-    output.innerHTML = "";
+    for(var i=0; i<bookmarks.length;i++){
+        if (bookmarks[i].name === name)  {
+            bookmarks.splice(i,1);
+            break;
 
 
-    for(var i=0;i<bookmarks.length;i++)   {
-
-        var div = document.createElement("div");
-
-        var h3 = document.createElement("h3");
-        h3.textContent = bookmarks[i].name;
-
-        // create vistit list
-        var a = document.createElement("a");
-        a.href = bookmarks[i].url;
-        a.className = "btn btn-success";
-        a.textContent = "vistit"
-
-        // delete button
-        var button = document.createElement("button");
-        button.className = "btn btn-danger";
-        button.textContent = "delete";
-
-
-        div.appendChild(h3);
-        div.appendChild(a);
-        div.appendChild(button);
-
-
-        output.appendChild(div);
+        }
     }
+
+
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+    fetchBookmarks();
+
+
+
 
 
 
 
 }
-
-
-
